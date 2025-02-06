@@ -6,7 +6,11 @@ app = Flask(__name__)
 
 # Your Facebook Page Access Token & Verify Token
 ACCESS_TOKEN = "EAAIuNEU6hpwBO2Rfdhl0ZAefMOxnZAuZCvKZAUlfFi1gyTduiZCs0N872Cf7UnG5mKOxJIapAYEJlncjwef6fqunJd5y0f2LPkWfXaxeowhwnwQtwhqZAX2TVSdFUh7CGomeQCHz2VqCUJxruT0aZCYhhOMNysZCIdV0gWANE0Xpiw6jYxyhIXbniZCgjDHmyP6qB"
-VERIFY_TOKEN = "chatbot-py"  # You can set this to any string
+VERIFY_TOKEN = "chatbot_py"
+
+@app.route('/')
+def home():
+    return "Chatbot is running!"
 
 @app.route('/webhook', methods=['GET'])
 def verify():
@@ -14,7 +18,6 @@ def verify():
     token_sent = request.args.get("hub.verify_token")
     challenge = request.args.get("hub.challenge")
     
-    # Facebook sends this token to verify if we set the correct one
     if token_sent == VERIFY_TOKEN:
         return challenge
     return "Verification token mismatch", 403
@@ -66,4 +69,5 @@ def send_message(recipient_id, message_text):
     requests.post(url, headers=headers, json=payload)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000, debug=True)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port, debug=True)
